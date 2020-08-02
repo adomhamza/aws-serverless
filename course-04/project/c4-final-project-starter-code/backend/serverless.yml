@@ -11,11 +11,11 @@ provider:
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
-  #TODO S3, AUTH
+  
   environment:
     TABLE_TODOS: Todos-${self:provider.stage}
-    AUTH_0_SECRET: z2JvJFPCw4F2SljDrRt2tQQIy9e3MArsWEYFv2MVpyTjO4b5DVjXhHqfewYvvjvg
-    S3_BUCKET: ross-serverless-todo-s3-${self:provider.stage}
+    AUTH_0_SECRET: sETxJ8lXHnYMH5b7_GtNGd5D0PBf0nh9XvyV_WK5DPsEi9jLXVKZgXHumfHHbA19
+    S3_BUCKET: adomhamza-serverless-todo-s3-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
  
 
