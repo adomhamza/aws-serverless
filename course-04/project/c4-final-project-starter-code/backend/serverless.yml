@@ -11,16 +11,14 @@ provider:
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
-  
+
   environment:
     TABLE_TODOS: Todos-${self:provider.stage}
     AUTH_0_SECRET: sETxJ8lXHnYMH5b7_GtNGd5D0PBf0nh9XvyV_WK5DPsEi9jLXVKZgXHumfHHbA19
     S3_BUCKET: adomhamza-serverless-todo-s3-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
- 
 
 functions:
-
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
@@ -34,18 +32,17 @@ functions:
           cors: true
     iamRoleStatementsName: ${self:service.name}-get-todos-role-${self:provider.stage}
     iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}/index/UserIdIndex
-
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}/index/UserIdIndex
 
   # TODO: Configure this function
-  GetTodos:
+
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
@@ -55,10 +52,10 @@ functions:
           cors: true
     iamRoleStatementsName: ${self:service.name}-create-todo-role-${self:provider.stage}
     iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:PutItem
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
 
   # TODO: Configure this function
   UpdateTodo:
@@ -70,10 +67,10 @@ functions:
           cors: true
     iamRoleStatementsName: ${self:service.name}-update-todo-role-${self:provider.stage}
     iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:UpdateItem
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
 
   # TODO: Configure this function
   DeleteTodo:
@@ -85,11 +82,10 @@ functions:
           cors: true
     iamRoleStatementsName: ${self:service.name}-delete-todo-role-${self:provider.stage}
     iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:DeleteItem
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
-
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
 
   # TODO: Configure this function
   GenerateUploadUrl:
@@ -101,16 +97,15 @@ functions:
           cors: true
     iamRoleStatementsName: ${self:service.name}-generate-url-role-${self:provider.stage}
     iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:UpdateItem
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
-    - Effect: Allow
-      Action:
-      - s3:PutObject
-      - s3:GetObject
-      Resource: arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*
-
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_TODOS}
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*
 
 resources:
   Resources:
@@ -129,21 +124,20 @@ resources:
         GlobalSecondaryIndexes:
           - IndexName: UserIdIndex
             KeySchema:
-            - AttributeName: userId
-              KeyType: HASH
+              - AttributeName: userId
+                KeyType: HASH
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TABLE_TODOS}
-      
+
     AttachmentBucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.S3_BUCKET}
         CorsConfiguration:
           CorsRules:
-            -
-              AllowedOrigins:
+            - AllowedOrigins:
                 - '*'
               AllowedHeaders:
                 - '*'
@@ -160,7 +154,7 @@ resources:
       Properties:
         PolicyDocument:
           Id: MyPolicy
-          Version: "2012-10-17"
+          Version: '2012-10-17'
           Statement:
             - Sid: PublicReadForGetBucketObjects
               Effect: Allow
@@ -168,4 +162,3 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*'
         Bucket: !Ref AttachmentBucket
-    
